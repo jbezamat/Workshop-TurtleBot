@@ -4,7 +4,7 @@ from std_msgs.msg import String
 from workshop.msg import Bumpers
 
 def callback(bumpers):
-    rospy.loginfo(rospy.get_caller_id() + "BUMPER_FORWARD: %s ; BUMPER_BACKWARD", bumpers.BUMPER_FORWARD, bumpers.BUMPER_BACKWARD)
+    rospy.loginfo(rospy.get_caller_id() + "BUMPER_LEFT: %s ; BUMPER_RIGHT", bumpers.BUMPER_LEFT, bumpers.BUMPER_RIGHT)
 
 def listener():
 
