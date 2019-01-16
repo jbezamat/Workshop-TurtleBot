@@ -23,5 +23,5 @@ if __name__ == "__main__":
     else:
         print usage()
         sys.exit(1)
-    print "Requesting %s+%s+%s"%(x, y, z)
+    print "Requesting [%s %s %s]"%(x, y, z)
     print "Return : %s"%(send_xyz(x, y, z))
