@@ -1,2 +1,2 @@
-bool   BUMPER_FORWARD
-bool   BUMPER_BACKWARD 
+bool   BUMPER_LEFT
+bool   BUMPER_RIGHT

@@ -4,7 +4,7 @@ from std_msgs.msg import String
 from workshop.msg import Bumpers
 
 def callback(bumpers):
-    rospy.loginfo(rospy.get_caller_id() + "BUMPER_LEFT: %s ; BUMPER_RIGHT", bumpers.BUMPER_LEFT, bumpers.BUMPER_RIGHT)
+    rospy.loginfo(rospy.get_caller_id() + "BUMPER_LEFT: %s ; BUMPER_RIGHT : %s", str(bumpers.BUMPER_LEFT), str(bumpers.BUMPER_RIGHT))
 
 def listener():
 
@@ -15,7 +15,7 @@ def listener():
     # run simultaneously.
     rospy.init_node('bumper_subscriber', anonymous=True)
 
-    rospy.Subscriber('chatter', Bumpers, callback)
+    rospy.Subscriber('bumper_topic', Bumpers, callback)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
