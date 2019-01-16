@@ -1,0 +1,2 @@
+bool   BUMPER_FORWARD
+bool   BUMPER_BACKWARD 
