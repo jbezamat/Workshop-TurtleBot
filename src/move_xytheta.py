@@ -58,7 +58,7 @@ class Robot():
         self.goal_x = req.x + self.x
         self.goal_y = req.y + self.y
         self.goal_theta = req.theta + self.theta
-        send.order()
+        self.send.order()
         return "youpi"
 
     def go_to_xytheta_server(self):
