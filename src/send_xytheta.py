@@ -17,8 +17,8 @@ def usage():
 
 if __name__ == "__main__":
     if len(sys.argv) == 4:
-        x = int(sys.argv[1])
-        y = int(sys.argv[2])
+        x = float(sys.argv[1])
+        y = float(sys.argv[2])
         theta = int(sys.argv[3])
     else:
         print usage()
