@@ -3,6 +3,7 @@ from workshop.srv import GoToXYTHETA
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 from nav_msgs.msg import Odometry
+from workshop.msg import Bumpers
 import rospy
 import math
 
@@ -25,6 +26,7 @@ class Robot():
         self.y = odom.pose.pose.position.y
         self.theta = 0
         distance = math.sqrt(pow(self.x - self.goal_x, 2) + pow(self.y - self.goal_y, 2))
+        print("distance : %f", distance)
         if(abs(self.theta - self.goal_theta) < 10):
             self.move_cmd.linear.x = distance * self.P
             self.move_cmd.angular.z = 0
@@ -39,12 +41,9 @@ class Robot():
             rate.sleep()
     
     def callback_bump(self):
-        stop_cmd = Twist()
-        stop_cmd.linear.x = 0
-        stop_cmd.linear.y = 0
-        stop_cmd.linear.z = 0
-        stop_cmd.angular.z = 0
-        self.cmd_pub.publish(stop_cmd)
+        print("callback_bump")
+        self.cmd_pub.publish(Twist())
+        rospy.sleep(1)
 
     def get_x(self):
         return self.x
@@ -58,7 +57,7 @@ class Robot():
         self.goal_x = req.x + self.x
         self.goal_y = req.y + self.y
         self.goal_theta = req.theta + self.theta
-        self.send.order()
+        self.send_order()
         return "youpi"
 
     def go_to_xytheta_server(self):
