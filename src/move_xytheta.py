@@ -9,8 +9,6 @@ import math
 
 class Robot():
     def __init__(self):
-        self.odom_sub = rospy.Subscriber('odom', Odometry, self.tick_asserv)
-        self.bump_sub = rospy.Subscriber('bumper_topic', Bumpers, self.callback_bump)
         self.goal_x = 0
         self.goal_y = 0
         self.goal_theta = 0
@@ -19,10 +17,12 @@ class Robot():
         self.theta = 0
         self.P = 3
         self.cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+        self.odom_sub = rospy.Subscriber('odom', Odometry, self.tick_asserv)
+        self.bump_sub = rospy.Subscriber('bumper_topic', Bumpers, self.callback_bump)
         self.move_cmd = Twist()
         self.state = 0
         self.seuil_d = 0.1
-        self.seuil_theta = 10
+        self.seuil_theta = 5
         self.stop = True
 
     def tick_asserv(self, odom):
@@ -30,10 +30,11 @@ class Robot():
         self.y = odom.pose.pose.position.y
         self.theta = 0
         distance = math.sqrt(pow(self.x - self.goal_x, 2) + pow(self.y - self.goal_y, 2))
+        angle = math.atan2(self.y, self.x)
         print("distance : %f", distance)
         if(abs(self.theta - self.goal_theta) > self.seuil_theta):
             self.move_cmd.linear.x = 0
-            self.move_cmd.angular.z = 0
+            self.move_cmd.angular.z = angle * 0.5
         elif(distance > self.seuil_d):
             self.state = 1
             self.move_cmd.linear.x = distance * self.P
@@ -41,6 +42,7 @@ class Robot():
         else:
             self.move_cmd.linear.x = 0
             self.move_cmd.angular.z = 0
+            self.stop = True
         self.send_order()
             
 
@@ -49,6 +51,8 @@ class Robot():
             rate = rospy.Rate(10) # 10hz
             self.cmd_pub.publish(self.move_cmd)
             rate.sleep()
+        else:
+            self.cmd_pub.publish(Twist())
     
     def callback_bump(self, bumpers):
         if(bumpers.BUMPER_LEFT or bumpers.BUMPER_RIGHT):
