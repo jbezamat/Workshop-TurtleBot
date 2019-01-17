@@ -23,6 +23,7 @@ class Robot():
         self.state = 0
         self.seuil_d = 0.1
         self.seuil_theta = 10
+        self.stop = True
 
     def tick_asserv(self, odom):
         self.x = odom.pose.pose.position.x
@@ -44,14 +45,16 @@ class Robot():
             
 
     def send_order(self):
-        rate = rospy.Rate(10) # 10hz
-        self.cmd_pub.publish(self.move_cmd)
-        rate.sleep()
+        if(not self.stop):
+            rate = rospy.Rate(10) # 10hz
+            self.cmd_pub.publish(self.move_cmd)
+            rate.sleep()
     
     def callback_bump(self, bumpers):
         if(bumpers.BUMPER_LEFT or bumpers.BUMPER_RIGHT):
             rospy.loginfo(rospy.get_caller_id() + "BUMPER_LEFT: %s ; BUMPER_RIGHT : %s", str(bumpers.BUMPER_LEFT), str(bumpers.BUMPER_RIGHT))
             print("callback_bump")
+            self.stop = True
             self.cmd_pub.publish(Twist())
             rospy.sleep(1)
 
@@ -67,6 +70,7 @@ class Robot():
         self.goal_x = req.x + self.x
         self.goal_y = req.y + self.y
         self.goal_theta = req.theta + self.theta
+        self.stop = False
         return "youpi"
 
     def go_to_xytheta_server(self):
