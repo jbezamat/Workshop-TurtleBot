@@ -21,7 +21,7 @@ class Robot():
         self.cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
         self.move_cmd = Twist()
         self.state = 0
-        self.seuil_d = 0.2
+        self.seuil_d = 0.1
         self.seuil_theta = 10
 
     def tick_asserv(self, odom):
@@ -40,13 +40,13 @@ class Robot():
         else:
             self.move_cmd.linear.x = 0
             self.move_cmd.angular.z = 0
+        self.send_order()
             
 
     def send_order(self):
         rate = rospy.Rate(10) # 10hz
-        while not rospy.is_shutdown():
-            self.cmd_pub.publish(self.move_cmd)
-            rate.sleep()
+        self.cmd_pub.publish(self.move_cmd)
+        rate.sleep()
     
     def callback_bump(self, bumpers):
         if(bumpers.BUMPER_LEFT or bumpers.BUMPER_RIGHT):
@@ -80,7 +80,6 @@ def main():
     try:
         robot = Robot()
         robot.go_to_xytheta_server()
-        robot.send_order()
     except rospy.ROSInterruptException:
         pass
 
