@@ -40,10 +40,11 @@ class Robot():
             self.cmd_pub.publish(self.move_cmd)
             rate.sleep()
     
-    def callback_bump(self):
-        print("callback_bump")
-        self.cmd_pub.publish(Twist())
-        rospy.sleep(1)
+    def callback_bump(self, bumper):
+        if(bumper.BUMPER_LEFT or bumper.BUMPER_RIGHT):
+            print("callback_bump")
+            self.cmd_pub.publish(Twist())
+            rospy.sleep(1)
 
     def get_x(self):
         return self.x
