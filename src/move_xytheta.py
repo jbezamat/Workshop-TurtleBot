@@ -9,6 +9,7 @@ import math
 class Robot():
     def __init__(self):
         self.odom_sub = rospy.Subscriber('odom', Odometry, self.tick_asserv)
+        self.bump_sub = rospy.Subscriber('bumper_topic', Bumpers, self.callback_bump)
         self.goal_x = 0
         self.goal_y = 0
         self.goal_theta = 0
@@ -36,6 +37,14 @@ class Robot():
         while not rospy.is_shutdown():
             self.cmd_pub.publish(self.move_cmd)
             rate.sleep()
+    
+    def callback_bump(self):
+        stop_cmd = Twist()
+        stop_cmd.linear.x = 0
+        stop_cmd.linear.y = 0
+        stop_cmd.linear.z = 0
+        stop_cmd.angular.z = 0
+        self.cmd_pub.publish(stop_cmd)
 
     def get_x(self):
         return self.x
@@ -49,6 +58,7 @@ class Robot():
         self.goal_x = req.x + self.x
         self.goal_y = req.y + self.y
         self.goal_theta = req.theta + self.theta
+        send.order()
         return "youpi"
 
     def go_to_xytheta_server(self):
