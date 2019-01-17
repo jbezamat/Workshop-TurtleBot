@@ -20,6 +20,9 @@ class Robot():
         self.P = 3
         self.cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
         self.move_cmd = Twist()
+        self.state = 0
+        self.seuil_d = 0.2
+        self.seuil_theta = 10
 
     def tick_asserv(self, odom):
         self.x = odom.pose.pose.position.x
@@ -27,12 +30,17 @@ class Robot():
         self.theta = 0
         distance = math.sqrt(pow(self.x - self.goal_x, 2) + pow(self.y - self.goal_y, 2))
         print("distance : %f", distance)
-        if(abs(self.theta - self.goal_theta) < 10):
+        if(abs(self.theta - self.goal_theta) > self.seuil_theta):
+            self.move_cmd.linear.x = 0
+            self.move_cmd.angular.z = 0
+        elif(distance > self.seuil_d):
+            self.state = 1
             self.move_cmd.linear.x = distance * self.P
             self.move_cmd.angular.z = 0
         else:
             self.move_cmd.linear.x = 0
             self.move_cmd.angular.z = 0
+            
 
     def send_order(self):
         rate = rospy.Rate(10) # 10hz
@@ -40,8 +48,9 @@ class Robot():
             self.cmd_pub.publish(self.move_cmd)
             rate.sleep()
     
-    def callback_bump(self, bumper):
-        if(bumper.BUMPER_LEFT or bumper.BUMPER_RIGHT):
+    def callback_bump(self, bumpers):
+        if(bumpers.BUMPER_LEFT or bumpers.BUMPER_RIGHT):
+            rospy.loginfo(rospy.get_caller_id() + "BUMPER_LEFT: %s ; BUMPER_RIGHT : %s", str(bumpers.BUMPER_LEFT), str(bumpers.BUMPER_RIGHT))
             print("callback_bump")
             self.cmd_pub.publish(Twist())
             rospy.sleep(1)
