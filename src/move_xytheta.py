@@ -26,6 +26,8 @@ class Robot():
         self.stop = True
 
     def tick_asserv(self, odom):
+        if(self.stop):
+            return
         self.x = odom.pose.pose.position.x
         self.y = odom.pose.pose.position.y
         self.theta = 0
@@ -37,7 +39,7 @@ class Robot():
             self.move_cmd.angular.z = angle * 0.5
         elif(distance > self.seuil_d):
             self.state = 1
-            self.move_cmd.linear.x = distance * self.P
+            self.move_cmd.linear.x = - distance * self.P
             self.move_cmd.angular.z = 0
         else:
             self.move_cmd.linear.x = 0
