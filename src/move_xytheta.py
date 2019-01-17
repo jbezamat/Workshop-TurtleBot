@@ -67,7 +67,6 @@ class Robot():
         self.goal_x = req.x + self.x
         self.goal_y = req.y + self.y
         self.goal_theta = req.theta + self.theta
-        self.send_order()
         return "youpi"
 
     def go_to_xytheta_server(self):
@@ -81,6 +80,7 @@ def main():
     try:
         robot = Robot()
         robot.go_to_xytheta_server()
+        robot.send_order()
     except rospy.ROSInterruptException:
         pass
 
